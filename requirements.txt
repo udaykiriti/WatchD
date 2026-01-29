@@ -1,0 +1,8 @@
+psutil
+click
+fastapi
+uvicorn[standard]
+pyyaml
+rich
+aiofiles
+jinja2
