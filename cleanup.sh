@@ -10,32 +10,32 @@ cat << "BANNER"
 
 BANNER
 
-echo " • Cleaning package manager cache"
+echo " •[Cooking]: Cleaning package manager cache"
 sudo dnf clean all
 
-echo " • Removing unused packages"
+echo " •[HOLD]: Removing unused packages"
 sudo dnf autoremove -y
 
-echo " • Trimming system logs (200MB max)"
+echo " •[WAIT]: Trimming system logs (200MB max)"
 sudo journalctl --vacuum-size=200M
 
-echo " • Clearing user cache"
+echo " •[Almost]: Clearing user cache"
 rm -rf ~/.cache/*
 
-echo " • Clearing temporary directories"
+echo " •[...]: Clearing temporary directories"
 sudo rm -rf /tmp/* /var/tmp/*
 
-echo " • Cleaning Flatpak leftovers"
+echo " •[HOLD]: Cleaning Flatpak leftovers"
 if command -v flatpak >/dev/null 2>&1; then
     flatpak uninstall --unused -y && flatpak repair
 else
     echo "   Flatpak not present, skipping"
 fi
 
-echo " • Removing old crash dumps"
+echo " •[TIGHT]: Removing old crash dumps"
 sudo rm -rf /var/lib/systemd/coredump/*
 
-echo " • Ensuring SSD TRIM is enabled"
+echo " •[CHECK]: Ensuring SSD TRIM is enabled"
 sudo systemctl enable --now fstrim.timer
 
 cat << "FOOTER"
