@@ -5,7 +5,6 @@ import os
 from rich.console import Console
 from rich.table import Table
 from rich.live import Live
-from rich.layout import Layout
 from rich.panel import Panel
 from monitor.cpu import get_cpu_metrics
 from monitor.memory import get_memory_metrics
@@ -100,7 +99,7 @@ def monitor(watch):
             table = Table(title="Live System Monitor")
             table.add_column("Metric")
             table.add_column("Value")
-            table.add_row("CPU", f"{cpu['usage_percent']}%)")
+            table.add_row("CPU", f"{cpu['usage_percent']}%")
             table.add_row("Memory", f"{mem['percent']}%")
             table.add_row("Disk", f"{disk.get('percent', 'N/A')}%")
             

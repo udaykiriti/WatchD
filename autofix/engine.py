@@ -1,10 +1,9 @@
 import logging
-import asyncio
 from monitor.cpu import get_cpu_metrics
 from monitor.memory import get_memory_metrics
 from monitor.disk import get_disk_metrics
 from autofix.rules import evaluate_condition
-from autofix.actions import kill_process, clear_cache, restart_service
+from autofix.actions import clear_cache, restart_service
 
 logger = logging.getLogger("sysguard.engine")
 

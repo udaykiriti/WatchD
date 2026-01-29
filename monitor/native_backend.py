@@ -1,16 +1,13 @@
 """
 Native backend support for high-performance monitoring
-Automatically uses Rust or C implementations if available, falls back to Python
+Uses Rust implementation for all system monitoring
 """
 
 import json
-import subprocess
 from pathlib import Path
 
 _BASE_PATH = Path(__file__).parent / "native"
 _RUST_LIB = _BASE_PATH / "rust" / "target" / "release" / "libsysguard_monitor.so"
-_C_PROCESS = _BASE_PATH / "c" / "process_watcher"
-_C_CPU = _BASE_PATH / "c" / "cpu_monitor"
 
 _rust_lib = None
 _backend_checked = False
@@ -50,28 +47,7 @@ def get_metrics_rust(limit=5):
         return None
 
 
-def get_metrics_c(limit=5):
-    """Get metrics using C backend"""
-    if not (_C_PROCESS.exists() and _C_CPU.exists()):
-        return None
-    
-    try:
-        proc_result = subprocess.run(
-            [str(_C_PROCESS), '-n', str(limit), '-s', 'cpu'],
-            capture_output=True, text=True, timeout=5
-        )
-        cpu_result = subprocess.run(
-            [str(_C_CPU), '1'],
-            capture_output=True, text=True, timeout=3
-        )
-        
-        if proc_result.returncode == 0 and cpu_result.returncode == 0:
-            return {'cpu': cpu_result.stdout, 'processes': proc_result.stdout}
-        return None
-    except Exception:
-        return None
-
-
 def use_native_backend():
     """Check if native backend is available"""
-    return _init_rust() or (_C_PROCESS.exists() and _C_CPU.exists())
+    return _init_rust()
+
