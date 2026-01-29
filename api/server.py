@@ -34,7 +34,7 @@ import asyncio
 from monitor.cpu import get_cpu_metrics
 from monitor.memory import get_memory_metrics
 from monitor.disk import get_disk_metrics
-from monitor.process import get_process_metrics
+from monitor.process import get_process_metrics, get_process_list
 
 app_fallback = FastAPI()
 

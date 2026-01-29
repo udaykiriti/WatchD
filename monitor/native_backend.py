@@ -39,15 +39,24 @@ def get_metrics_rust(limit=5):
         return None
     
     try:
-        json_str = _rust_lib.rust_get_metrics_json(limit)
-        metrics = json.loads(json_str.decode('utf-8'))
-        _rust_lib.rust_free_string(json_str)
+        import ctypes
+        ptr = _rust_lib.rust_get_metrics_json(limit)
+        json_str = ctypes.cast(ptr, ctypes.c_char_p).value.decode('utf-8')
+        metrics = json.loads(json_str)
+        _rust_lib.rust_free_string(ptr)
         return metrics
     except Exception:
         return None
 
 
+def get_all_metrics(limit=10):
+    """
+    Get all metrics in a single call - more efficient than separate calls.
+    Use this when you need cpu, memory, disk, and process data together.
+    """
+    return get_metrics_rust(limit)
+
+
 def use_native_backend():
     """Check if native backend is available"""
     return _init_rust()
-

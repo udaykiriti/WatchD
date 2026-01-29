@@ -13,22 +13,29 @@ def get_process_metrics(limit=5, sort_by='cpu'):
     metrics = get_metrics_rust(limit=limit)
     if metrics and 'top_processes' in metrics:
         processes = metrics['top_processes']
-        # Convert to format expected by rest of application
+        total_memory = get_total_memory()
+        
         return [
             {
                 'pid': p['pid'],
                 'name': p['name'],
                 'cpu_percent': p['cpu_percent'],
-                'memory_percent': (p['memory_mb'] / get_total_memory()) * 100 if p.get('memory_mb') else 0,
-                'username': 'unknown'  # Not provided by Rust backend
+                'memory_percent': (p['memory_mb'] / total_memory) * 100 if p.get('memory_mb') and total_memory > 0 else 0,
+                'username': 'unknown'
             }
             for p in processes
         ]
     raise RuntimeError("Native backend not available. Run: ./buildnative.sh")
 
 def get_total_memory():
-    """Helper to get total memory for percentage calculation."""
+    """Helper to get total memory for percentage calculation (cached)."""
     from .memory import get_memory_metrics
     mem = get_memory_metrics()
     return mem['total_mb']
 
+_process_cache = []
+_cache_timestamp = 0
+
+def get_process_list(limit=10):
+    """Alias for get_process_metrics for API compatibility"""
+    return get_process_metrics(limit)

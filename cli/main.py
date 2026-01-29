@@ -13,11 +13,16 @@ from autofix.engine import AutoFixEngine
 from storage.db import init_db, log_metrics, get_recent_alerts
 
 console = Console()
+_config_cache = None
 
 def load_config():
-    config_path = os.path.join(os.path.dirname(__file__), "../config/sysguard.yaml")
-    with open(config_path, "r") as f:
-        return yaml.safe_load(f)
+    """Load configuration with caching to avoid repeated YAML parsing"""
+    global _config_cache
+    if _config_cache is None:
+        config_path = os.path.join(os.path.dirname(__file__), "../config/sysguard.yaml")
+        with open(config_path, "r") as f:
+            _config_cache = yaml.safe_load(f)
+    return _config_cache
 
 def build_metrics_table(cpu, mem, disk, title="System Status"):
     """Build reusable metrics display table"""
