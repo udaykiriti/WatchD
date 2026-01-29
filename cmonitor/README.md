@@ -73,12 +73,12 @@ import subprocess
 import json
 
 # Process watcher
-result = subprocess.run(['./c_monitor/process_watcher', '-n', '5'], 
+result = subprocess.run(['./cmonitor/process_watcher', '-n', '5'], 
                        capture_output=True, text=True)
 print(result.stdout)
 
 # CPU monitor
-result = subprocess.run(['./c_monitor/cpu_monitor', '1'], 
+result = subprocess.run(['./cmonitor/cpu_monitor', '1'], 
                        capture_output=True, text=True)
 print(result.stdout)
 ```

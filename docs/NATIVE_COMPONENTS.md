@@ -2,7 +2,7 @@
 
 ## What Was Added
 
-### 1. Rust Monitor (`rust_monitor/`)
+### 1. Rust Monitor (`rustmonitor/`)
 **Purpose**: High-performance, memory-safe system monitoring
 
 **Files**:
@@ -19,7 +19,7 @@
 
 **Performance**: 10-100x faster than Python
 
-### 2. C Monitor (`c_monitor/`)
+### 2. C Monitor (`cmonitor/`)
 **Purpose**: Lightweight, minimal-overhead system monitoring
 
 **Files**:
@@ -36,7 +36,7 @@
 
 **Performance**: 10-50x faster than Python
 
-### 3. Integration Layer (`native_bridge.py`)
+### 3. Integration Layer (`nativebridge.py`)
 **Purpose**: Seamless Python-Rust-C integration with automatic fallback
 
 **Features**:
@@ -45,7 +45,7 @@
 - Graceful fallback if native modules unavailable
 - Unified API regardless of backend
 
-### 4. Build System (`build_native.sh`)
+### 4. Build System (`buildnative.sh`)
 **Purpose**: Automated compilation of native components
 
 **Features**:
@@ -59,7 +59,7 @@
 ### Rust (Standalone)
 ```bash
 # Build
-cd rust_monitor && cargo build --release
+cd rustmonitor && cargo build --release
 
 # Run
 ./target/release/monitor 5
@@ -68,7 +68,7 @@ cd rust_monitor && cargo build --release
 ### C (Standalone)
 ```bash
 # Build
-cd c_monitor && make
+cd cmonitor && make
 
 # Process watcher
 ./process_watcher -n 10 -s cpu
@@ -80,7 +80,7 @@ cd c_monitor && make
 ### Python Integration
 ```bash
 # Auto-select best implementation
-python3 native_bridge.py 5 rust
+python3 nativebridge.py 5 rust
 
 # Or from Python code:
 from native_bridge import get_metrics_auto
@@ -113,8 +113,8 @@ curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 sudo dnf install gcc make
 
 # Build all native components
-chmod +x build_native.sh
-./build_native.sh
+chmod +x buildnative.sh
+./buildnative.sh
 ```
 
 ## Integration with Existing Code

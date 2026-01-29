@@ -59,3 +59,13 @@ Thumbs.db
 .cache/
 tmp/
 temp/
+
+# Rust
+rustmonitor/target/
+rustmonitor/Cargo.lock
+*.rs.bk
+
+# C
+cmonitor/*.o
+cmonitor/process_watcher
+cmonitor/cpu_monitor

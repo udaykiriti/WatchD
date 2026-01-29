@@ -34,8 +34,8 @@ cd sysguard
 pip install -r requirements.txt
 
 # Optional: Build native components for better performance
-chmod +x build_native.sh
-./build_native.sh
+chmod +x buildnative.sh
+./buildnative.sh
 ```
 
 ### Basic Usage
@@ -114,12 +114,12 @@ sysguard/
 │   ├── memory.py       # Memory metrics
 │   ├── disk.py         # Disk metrics
 │   └── process.py      # Process metrics
-├── rust_monitor/       # High-performance Rust implementation
+├── rustmonitor/          # High-performance Rust implementation
 │   ├── src/
-│   │   ├── lib.rs      # Core monitoring library
-│   │   └── main.rs     # Standalone binary
-│   └── Cargo.toml      # Rust dependencies
-├── c_monitor/          # Lightweight C implementation
+│   │   ├── lib.rs       # Core monitoring library
+│   │   └── main.rs      # Standalone binary
+│   └── Cargo.toml       # Rust dependencies
+├── cmonitor/            # Lightweight C implementation
 │   ├── process_watcher.c  # Fast process monitoring
 │   ├── cpu_monitor.c   # CPU usage tracking
 │   └── Makefile        # Build configuration
@@ -135,9 +135,9 @@ sysguard/
 │   └── dashboard.js    # Chart.js visualization
 ├── config/             # Configuration
 │   └── sysguard.yaml   # Settings & thresholds
-├── docs/               # Documentation
-├── native_bridge.py    # Python-Rust-C integration layer
-├── build_native.sh     # Native components build script
+├── docs/                # Documentation
+├── nativebridge.py     # Python-Rust-C integration layer
+├── buildnative.sh      # Native components build script
 ├── run.py              # Entry point
 ├── cleanup.sh          # Fedora system cleanup utility
 ├── requirements.txt    # Python dependencies
@@ -188,14 +188,14 @@ SysGuard offers multiple implementation tiers:
 ### 1. Rust Implementation (Fastest)
 - **10-100x faster** than Python
 - Memory-safe, zero-cost abstractions
-- Build: `cd rust_monitor && cargo build --release`
-- Use: `./rust_monitor/target/release/monitor 5`
+- Build: `cd rustmonitor && cargo build --release`
+- Use: `./rustmonitor/target/release/monitor 5`
 
 ### 2. C Implementation (Lightweight)
 - **10-50x faster** than Python
 - Minimal overhead, direct system calls
-- Build: `cd c_monitor && make`
-- Use: `./c_monitor/process_watcher -n 10`
+- Build: `cd cmonitor && make`
+- Use: `./cmonitor/process_watcher -n 10`
 
 ### 3. Python Implementation (Default)
 - Works out of the box, no compilation needed
@@ -205,12 +205,12 @@ SysGuard offers multiple implementation tiers:
 ### Automatic Selection
 ```bash
 # Automatically chooses best available implementation
-python3 native_bridge.py 5 rust
+python3 nativebridge.py 5 rust
 ```
 
 See component READMEs for details:
-- [Rust Monitor](rust_monitor/README.md)
-- [C Monitor](c_monitor/README.md)
+- [Rust Monitor](rustmonitor/README.md)
+- [C Monitor](cmonitor/README.md)
 
 ## Documentation
 
