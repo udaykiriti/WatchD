@@ -117,8 +117,8 @@ pub fn get_all_metrics(limit: usize) -> SystemMetrics {
     let mut sys = System::new_all();
     sys.refresh_all();
     
-    // Sleep briefly to get accurate CPU usage
-    std::thread::sleep(std::time::Duration::from_millis(200));
+    // Reduced sleep for faster response (was 200ms, now 50ms = 75% faster)
+    std::thread::sleep(std::time::Duration::from_millis(50));
     sys.refresh_cpu();
     
     SystemMetrics {
