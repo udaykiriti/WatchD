@@ -1,4 +1,5 @@
-#!/bin/bash
+#!/usr/bin/env bash
+set -euo pipefail
 
 # -------- Colors --------
 BLUE='\033[38;5;33m'
