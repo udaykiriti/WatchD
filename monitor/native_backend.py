@@ -26,8 +26,9 @@ def _init_rust():
     try:
         import ctypes
         _rust_lib = ctypes.CDLL(str(_RUST_LIB))
-        _rust_lib.rust_get_metrics_json.restype = ctypes.c_char_p
-        _rust_lib.rust_free_string.argtypes = [ctypes.c_char_p]
+        _rust_lib.rust_get_metrics_json.argtypes = [ctypes.c_size_t]
+        _rust_lib.rust_get_metrics_json.restype = ctypes.c_void_p
+        _rust_lib.rust_free_string.argtypes = [ctypes.c_void_p]
         return True
     except Exception:
         return False
@@ -41,11 +42,14 @@ def get_metrics_rust(limit=5):
     try:
         import ctypes
         ptr = _rust_lib.rust_get_metrics_json(limit)
-        json_str = ctypes.cast(ptr, ctypes.c_char_p).value.decode('utf-8')
+        if not ptr:
+            return None
+        json_bytes = ctypes.string_at(ptr)
+        json_str = json_bytes.decode('utf-8')
         metrics = json.loads(json_str)
         _rust_lib.rust_free_string(ptr)
         return metrics
-    except Exception:
+    except Exception as e:
         return None
 
 
