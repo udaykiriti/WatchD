@@ -2,7 +2,7 @@
 
 # Build script for native performance modules
 
-set -e
+set -euo pipefail
 
 echo "=== Building Native Performance Modules ==="
 echo ""
