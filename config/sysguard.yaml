@@ -1,0 +1,21 @@
+monitoring:
+  interval: 2
+  thresholds:
+    cpu_percent: 85.0
+    memory_percent: 90.0
+    disk_percent: 90.0
+
+autofix:
+  enabled: false
+  dry_run: true
+  rules:
+    - name: "High CPU Usage"
+      trigger: "cpu_percent > 95"
+      action: "notify"
+    - name: "High Memory Usage"
+      trigger: "memory_percent > 95"
+      action: "clear_cache"
+
+logging:
+  file: "sysguard.log"
+  level: "INFO"
