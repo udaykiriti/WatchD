@@ -30,11 +30,13 @@ git clone <repository-url>
 cd sysguard
 
 # Build native backends (REQUIRED)
-chmod +x buildnative.sh
-./buildnative.sh
+chmod +x scripts/buildnative.sh
+./scripts/buildnative.sh
+# OR use Makefile
+make build
 
 # Install Python dependencies
-pip install -r requirements.txt
+pip install -r requirements/requirements.txt
 ```
 
 **Important**: This project requires native Rust/C backends to be built before use. All system monitoring is performed by these native implementations for maximum performance.
