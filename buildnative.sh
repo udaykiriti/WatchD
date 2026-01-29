@@ -1,34 +1,34 @@
 #!/bin/bash
 
-# Build script for native components
+# Build script for native performance modules
 
 set -e
 
-echo "=== Building Native Components ==="
+echo "=== Building Native Performance Modules ==="
 echo ""
 
-# Build Rust components
+# Build Rust module
 if command -v cargo >/dev/null 2>&1; then
-    echo "Building Rust monitor..."
-    cd rustmonitor
+    echo "Building Rust backend..."
+    cd monitor/native/rust
     cargo build --release
-    cd ..
-    echo "✓ Rust monitor built successfully"
+    cd ../../..
+    echo "✓ Rust backend built successfully"
 else
     echo "⚠ Cargo not found. Skipping Rust build."
-    echo "  Install Rust: curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh"
+    echo "  Install: curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh"
 fi
 
 echo ""
 
-# Build C components
+# Build C modules
 if command -v gcc >/dev/null 2>&1; then
-    echo "Building C monitors..."
-    cd cmonitor
+    echo "Building C backend..."
+    cd monitor/native/c
     make clean
     make
-    cd ..
-    echo "✓ C monitors built successfully"
+    cd ../../..
+    echo "✓ C backend built successfully"
 else
     echo "⚠ GCC not found. Skipping C build."
     echo "  Install: sudo dnf install gcc make"
@@ -37,10 +37,7 @@ fi
 echo ""
 echo "=== Build Complete ==="
 echo ""
-echo "Test the components:"
-echo "  Rust: ./rustmonitor/target/release/monitor 5"
-echo "  C:    ./cmonitor/process_watcher -n 10"
-echo "  C:    ./cmonitor/cpu_monitor 1"
+echo "Native backends are now available for performance acceleration."
+echo "The monitor module will automatically use them when available."
 echo ""
-echo "Use nativebridge.py for automatic fallback:"
-echo "  python3 nativebridge.py 5 rust"
+echo "Test with: python3 run.py status"

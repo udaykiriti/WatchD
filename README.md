@@ -12,16 +12,15 @@ A powerful, real-time system monitoring and automated remediation tool with a mo
 - **Process Management**: Identify and manage resource-hungry processes
 - **System Snapshots**: Quick health check of your system
 - **Configuration-Driven**: YAML-based configuration for easy customization
-- **Multi-Language Performance**: Rust & C implementations for critical performance paths
-- **Automatic Fallback**: Seamless integration between native (Rust/C) and Python modules
+- **Native Performance**: Optional Rust & C backends for 10-100x speed improvement
+- **Smart Fallback**: Automatically uses native backends when available
 
 ## Quick Start
 
 ### Prerequisites
 - Python 3.8+
 - pip (Python package manager)
-- **Optional**: Rust (for high-performance monitoring)
-- **Optional**: GCC (for C-based monitors)
+- **Optional**: Rust & GCC for native performance backends
 
 ### Installation
 
@@ -33,7 +32,7 @@ cd sysguard
 # Install Python dependencies
 pip install -r requirements.txt
 
-# Optional: Build native components for better performance
+# Optional: Build native backends for 10-100x better performance
 chmod +x buildnative.sh
 ./buildnative.sh
 ```
@@ -183,34 +182,26 @@ logging:
 
 ## Performance Optimization
 
-SysGuard offers multiple implementation tiers:
+SysGuard includes optional native backends for performance-critical operations:
 
-### 1. Rust Implementation (Fastest)
-- **10-100x faster** than Python
+### Native Backends (Optional)
+Build with: `./buildnative.sh`
+
+**Rust Backend** (10-100x faster)
 - Memory-safe, zero-cost abstractions
-- Build: `cd rustmonitor && cargo build --release`
-- Use: `./rustmonitor/target/release/monitor 5`
+- Automatic integration when built
+- Located in `monitor/native/rust/`
 
-### 2. C Implementation (Lightweight)
-- **10-50x faster** than Python
+**C Backend** (10-50x faster)
 - Minimal overhead, direct system calls
-- Build: `cd cmonitor && make`
-- Use: `./cmonitor/process_watcher -n 10`
+- Automatic integration when built
+- Located in `monitor/native/c/`
 
-### 3. Python Implementation (Default)
-- Works out of the box, no compilation needed
-- Full feature set with psutil
-- Automatic fallback if native modules unavailable
+**Python Backend** (Default)
+- Always available, no compilation needed
+- Automatic fallback if native backends not built
 
-### Automatic Selection
-```bash
-# Automatically chooses best available implementation
-python3 nativebridge.py 5 rust
-```
-
-See component READMEs for details:
-- [Rust Monitor](rustmonitor/README.md)
-- [C Monitor](cmonitor/README.md)
+The monitor module automatically detects and uses native backends when available. No code changes needed!
 
 ## Documentation
 

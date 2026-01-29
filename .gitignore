@@ -61,11 +61,11 @@ tmp/
 temp/
 
 # Rust
-rustmonitor/target/
-rustmonitor/Cargo.lock
+monitor/native/rust/target/
+monitor/native/rust/Cargo.lock
 *.rs.bk
 
 # C
-cmonitor/*.o
-cmonitor/process_watcher
-cmonitor/cpu_monitor
+monitor/native/c/*.o
+monitor/native/c/process_watcher
+monitor/native/c/cpu_monitor
