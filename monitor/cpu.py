@@ -1,15 +1,24 @@
-import psutil
+"""
+CPU monitoring - Native backend wrapper
+Requires Rust/C native backends to be built
+"""
+
+from .native_backend import get_metrics_rust
 
 def get_cpu_metrics():
-    """Returns a dictionary of CPU metrics."""
-    return {
-        "usage_percent": psutil.cpu_percent(interval=0.1), # Short interval for responsiveness
-        "cores_logical": psutil.cpu_count(logical=True),
-        "cores_physical": psutil.cpu_count(logical=False),
-        "load_avg": [x / psutil.cpu_count() * 100 for x in psutil.getloadavg()] # Normalize load avg
-    }
+    """Returns a dictionary of CPU metrics from native Rust backend."""
+    metrics = get_metrics_rust()
+    if metrics and 'cpu' in metrics:
+        cpu = metrics['cpu']
+        return {
+            "usage_percent": cpu['usage_percent'],
+            "cores_logical": cpu['cores_logical'],
+            "cores_physical": cpu.get('cores_physical', cpu['cores_logical'] // 2),
+            "load_avg": [cpu['load_avg_1'], cpu['load_avg_5'], cpu['load_avg_15']]
+        }
+    raise RuntimeError("Native backend not available. Run: ./buildnative.sh")
 
 def cpu_info():
-    """Returns a formatted string for CPU info (Legacy support)."""
+    """Returns a formatted string for CPU info."""
     metrics = get_cpu_metrics()
-    return f"CPU Usage: {metrics['usage_percent']}% | Cores: {metrics['cores_logical']}"
+    return f"CPU Usage: {metrics['usage_percent']:.1f}% | Cores: {metrics['cores_logical']}"

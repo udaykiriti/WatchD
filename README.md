@@ -1,10 +1,11 @@
 # SysGuard - Advanced System Health & Auto-Fix Tool
 
-A powerful, real-time system monitoring and automated remediation tool with a modern web dashboard, CLI interface, and intelligent auto-fix engine.
+A powerful, real-time system monitoring and automated remediation tool with native Rust/C performance, modern web dashboard, CLI interface, and intelligent auto-fix engine.
 
 ## Features
 
-- **Real-Time Monitoring**: Track CPU, Memory, Disk, and Process metrics in real-time
+- **Native Performance**: Rust and C implementations for system monitoring (10-100x faster than Python)
+- **Real-Time Monitoring**: Track CPU, Memory, Disk, and Process metrics with minimal overhead
 - **Live Dashboard**: Beautiful web-based dashboard with WebSocket streaming
 - **Auto-Fix Engine**: Automated rules-based system remediation (dry-run mode by default)
 - **CLI Interface**: Full-featured command-line interface with Rich formatting
@@ -12,15 +13,14 @@ A powerful, real-time system monitoring and automated remediation tool with a mo
 - **Process Management**: Identify and manage resource-hungry processes
 - **System Snapshots**: Quick health check of your system
 - **Configuration-Driven**: YAML-based configuration for easy customization
-- **Native Performance**: Optional Rust & C backends for 10-100x speed improvement
-- **Smart Fallback**: Automatically uses native backends when available
 
 ## Quick Start
 
 ### Prerequisites
 - Python 3.8+
+- Rust (cargo)
+- GCC and make
 - pip (Python package manager)
-- **Optional**: Rust & GCC for native performance backends
 
 ### Installation
 
@@ -29,19 +29,21 @@ A powerful, real-time system monitoring and automated remediation tool with a mo
 git clone <repository-url>
 cd sysguard
 
-# Install Python dependencies
-pip install -r requirements.txt
-
-# Optional: Build native backends for 10-100x better performance
+# Build native backends (REQUIRED)
 chmod +x buildnative.sh
 ./buildnative.sh
+
+# Install Python dependencies
+pip install -r requirements.txt
 ```
+
+**Important**: This project requires native Rust/C backends to be built before use. All system monitoring is performed by these native implementations for maximum performance.
 
 ### Basic Usage
 
 **Interactive Menu (Recommended)**
 ```bash
-bash sysguard.sh
+bash watchD.sh
 ```
 
 **Direct Commands**
@@ -60,6 +62,49 @@ python3 run.py history
 
 # Web dashboard
 python3 run.py web --host 0.0.0.0 --port 8000
+```
+
+## Architecture
+
+SysGuard uses a hybrid architecture with native performance:
+
+- **Monitor Module**: Thin Python wrappers around native Rust/C implementations
+- **Native Backends**: High-performance system monitoring in Rust with C supplements
+- **Web Dashboard**: FastAPI server with WebSocket for real-time updates
+- **CLI**: Rich-formatted command-line interface
+- **Auto-Fix Engine**: Rule-based automated system remediation
+- **Storage**: SQLite for persistent alert history
+
+All system metrics (CPU, memory, disk, processes) are collected by native Rust/C code for maximum performance and minimal overhead.
+
+## Project Structure
+
+```
+sysguard/
+├── monitor/            # System monitoring module
+│   ├── cpu.py          # CPU metrics (Rust wrapper)
+│   ├── memory.py       # Memory metrics (Rust wrapper)
+│   ├── disk.py         # Disk metrics (Rust wrapper)
+│   ├── process.py      # Process metrics (Rust wrapper)
+│   ├── native_backend.py  # Native backend loader
+│   └── native/         # Native implementations (REQUIRED)
+│       ├── rust/       # Rust implementation (primary)
+│       │   ├── src/lib.rs   # Core monitoring + FFI
+│       │   └── Cargo.toml
+│       └── c/          # C implementation (supplementary)
+│           ├── process_watcher.c
+│           └── cpu_monitor.c
+├── api/                # FastAPI backend
+├── autofix/            # Auto-fix engine
+├── cli/                # Command-line interface
+├── config/             # YAML configuration
+├── docs/               # Documentation
+├── storage/            # SQLite database
+├── web/                # Dashboard assets
+├── buildnative.sh      # Build script (REQUIRED)
+├── cleanup.sh          # System cleanup utility
+├── run.py              # Main entry point
+└── watchD.sh           # Interactive menu
 ```
 
 ## Web Dashboard
@@ -102,57 +147,24 @@ autofix:
 - `restart_<service>`: Restart a systemd service
 - `kill_process`: Terminate a process by PID
 
-## Project Structure
-
-```
-sysguard/
-├── cli/                 # Command-line interface
-│   └── main.py         # Click CLI commands
-├── monitor/            # System metrics collection (Python)
-│   ├── cpu.py          # CPU metrics
-│   ├── memory.py       # Memory metrics
-│   ├── disk.py         # Disk metrics
-│   └── process.py      # Process metrics
-├── rustmonitor/          # High-performance Rust implementation
-│   ├── src/
-│   │   ├── lib.rs       # Core monitoring library
-│   │   └── main.rs      # Standalone binary
-│   └── Cargo.toml       # Rust dependencies
-├── cmonitor/            # Lightweight C implementation
-│   ├── process_watcher.c  # Fast process monitoring
-│   ├── cpu_monitor.c   # CPU usage tracking
-│   └── Makefile        # Build configuration
-├── api/                # FastAPI backend
-│   └── server.py       # WebSocket & REST endpoints
-├── autofix/            # Auto-fix engine
-│   ├── engine.py       # Rule evaluation & execution
-│   ├── rules.py        # Condition evaluator
-│   └── actions.py      # Executable actions
-├── storage/            # Data persistence
-│   └── db.py          # SQLite database management
-├── web/                # Frontend assets
-│   └── dashboard.js    # Chart.js visualization
-├── config/             # Configuration
-│   └── sysguard.yaml   # Settings & thresholds
-├── docs/                # Documentation
-├── nativebridge.py     # Python-Rust-C integration layer
-├── buildnative.sh      # Native components build script
-├── run.py              # Entry point
-├── cleanup.sh          # Fedora system cleanup utility
-├── requirements.txt    # Python dependencies
-└── README.md           # This file
-```
-
 ## Dependencies
 
-- **psutil**: System and process utilities
-- **click**: CLI framework
+### Native (Required)
+- Rust toolchain (cargo)
+- GCC compiler
+- make
+
+### Python
 - **fastapi**: Modern async web framework
 - **uvicorn**: ASGI server
-- **pyyaml**: YAML configuration parsing
+- **click**: CLI framework
 - **rich**: Beautiful terminal formatting
+- **pyyaml**: YAML configuration parsing
 - **aiofiles**: Async file operations
 - **jinja2**: Template engine
+- **websockets**: WebSocket support
+
+Note: psutil is NOT used. All system monitoring is done natively in Rust/C.
 
 ## Configuration
 
@@ -175,33 +187,10 @@ logging:
 
 ## Security Notes
 
-- Default: Auto-fix runs in **dry-run mode** (no actual modifications)
+- Default: Auto-fix runs in dry-run mode (no actual modifications)
 - Requires elevated privileges for: cache clearing, service restart, process termination
 - Rule conditions use safe evaluation (no arbitrary code execution)
 - All actions are logged
-
-## Performance Optimization
-
-SysGuard includes optional native backends for performance-critical operations:
-
-### Native Backends (Optional)
-Build with: `./buildnative.sh`
-
-**Rust Backend** (10-100x faster)
-- Memory-safe, zero-cost abstractions
-- Automatic integration when built
-- Located in `monitor/native/rust/`
-
-**C Backend** (10-50x faster)
-- Minimal overhead, direct system calls
-- Automatic integration when built
-- Located in `monitor/native/c/`
-
-**Python Backend** (Default)
-- Always available, no compilation needed
-- Automatic fallback if native backends not built
-
-The monitor module automatically detects and uses native backends when available. No code changes needed!
 
 ## Documentation
 
@@ -210,13 +199,18 @@ See `docs/` for detailed guides:
 - [Configuration Guide](docs/CONFIG.md)
 - [Auto-Fix Rules](docs/AUTOFIX.md)
 - [API Reference](docs/API.md)
+- [Native Backends](docs/NATIVE_BACKENDS.md)
 
 ## Troubleshooting
 
-### Dashboard not connecting
+### Native backends not built
 ```bash
-# Check if server is running
-curl http://localhost:8000/health
+# Build the backends
+./buildnative.sh
+
+# Verify build
+ls monitor/native/rust/target/release/libsysguard_monitor.so
+ls monitor/native/c/process_watcher
 ```
 
 ### Permission denied errors
@@ -247,3 +241,4 @@ For issues, questions, or suggestions, please open an issue on GitHub.
 ---
 
 **Built for system administrators and DevOps engineers**
+**Powered by Rust for maximum performance**

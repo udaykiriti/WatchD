@@ -1,8 +1,20 @@
-psutil
-click
+# Core web framework
 fastapi
 uvicorn[standard]
-pyyaml
+websockets
+
+# CLI
+click
 rich
+
+# Configuration
+pyyaml
+
+# Async support
 aiofiles
+
+# Template engine
 jinja2
+
+# Note: System monitoring is handled by native Rust/C backends
+# Run ./buildnative.sh to build the required native components

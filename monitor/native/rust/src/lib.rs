@@ -1,5 +1,5 @@
 use serde::{Deserialize, Serialize};
-use sysinfo::{CpuExt, System, SystemExt, ProcessExt, PidExt};
+use sysinfo::{CpuExt, System, SystemExt, ProcessExt, PidExt, DiskExt, Disks};
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct CpuMetrics {
@@ -19,6 +19,14 @@ pub struct MemoryMetrics {
 }
 
 #[derive(Serialize, Deserialize, Debug)]
+pub struct DiskMetrics {
+    pub total_gb: u64,
+    pub used_gb: u64,
+    pub free_gb: u64,
+    pub percent: f64,
+}
+
+#[derive(Serialize, Deserialize, Debug)]
 pub struct ProcessInfo {
     pub pid: u32,
     pub name: String,
@@ -30,6 +38,7 @@ pub struct ProcessInfo {
 pub struct SystemMetrics {
     pub cpu: CpuMetrics,
     pub memory: MemoryMetrics,
+    pub disk: DiskMetrics,
     pub top_processes: Vec<ProcessInfo>,
 }
 
@@ -55,6 +64,32 @@ pub fn get_memory_metrics(sys: &System) -> MemoryMetrics {
         used_mb: used / 1024 / 1024,
         available_mb: available / 1024 / 1024,
         percent: (used as f64 / total as f64) * 100.0,
+    }
+}
+
+pub fn get_disk_metrics() -> DiskMetrics {
+    let disks = Disks::new_with_refreshed_list();
+    
+    let mut total: u64 = 0;
+    let mut available: u64 = 0;
+    
+    for disk in disks.iter() {
+        total += disk.total_space();
+        available += disk.available_space();
+    }
+    
+    let used = total.saturating_sub(available);
+    let percent = if total > 0 {
+        (used as f64 / total as f64) * 100.0
+    } else {
+        0.0
+    };
+    
+    DiskMetrics {
+        total_gb: total / 1024 / 1024 / 1024,
+        used_gb: used / 1024 / 1024 / 1024,
+        free_gb: available / 1024 / 1024 / 1024,
+        percent,
     }
 }
 
@@ -88,6 +123,7 @@ pub fn get_all_metrics(limit: usize) -> SystemMetrics {
     SystemMetrics {
         cpu: get_cpu_metrics(&sys),
         memory: get_memory_metrics(&sys),
+        disk: get_disk_metrics(),
         top_processes: get_top_processes(&sys, limit),
     }
 }

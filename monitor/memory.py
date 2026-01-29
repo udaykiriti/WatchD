@@ -1,15 +1,18 @@
-import psutil
+"""
+Memory monitoring - Native backend wrapper
+Requires Rust/C native backends to be built
+"""
+
+from .native_backend import get_metrics_rust
 
 def get_memory_metrics():
-    """Returns a dictionary of Memory metrics."""
-    mem = psutil.virtual_memory()
-    return {
-        "total_mb": mem.total // (1024 * 1024),
-        "used_mb": mem.used // (1024 * 1024),
-        "available_mb": mem.available // (1024 * 1024),
-        "percent": mem.percent
-    }
+    """Returns a dictionary of Memory metrics from native Rust backend."""
+    metrics = get_metrics_rust()
+    if metrics and 'memory' in metrics:
+        return metrics['memory']
+    raise RuntimeError("Native backend not available. Run: ./buildnative.sh")
 
 def memory_info():
+    """Returns a formatted string for memory info."""
     metrics = get_memory_metrics()
-    return f"Memory: {metrics['used_mb']}MB / {metrics['total_mb']}MB ({metrics['percent']}%)"
+    return f"Memory: {metrics['used_mb']}MB / {metrics['total_mb']}MB ({metrics['percent']:.1f}%)"
