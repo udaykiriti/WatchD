@@ -35,9 +35,25 @@ else
 fi
 
 echo ""
+
+# Build native web server
+if command -v gcc >/dev/null 2>&1; then
+    echo "Building native web server..."
+    cd api/native
+    make clean
+    make
+    cd ../..
+    echo "[OK] Native web server built successfully"
+else
+    echo "⚠ Skipping native web server build (no GCC)"
+fi
+
+echo ""
 echo "=== Build Complete ==="
 echo ""
 echo "Native backends are now available for performance acceleration."
 echo "The monitor module will automatically use them when available."
 echo ""
-echo "Test with: python3 run.py status"
+echo "Start web server: python3 api/server.py"
+echo "Or fallback mode: uvicorn api.server:app_fallback --port 8000"
+echo "Test CLI: python3 run.py status"

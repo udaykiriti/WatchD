@@ -87,6 +87,40 @@ function updateTimestamp() {
     document.getElementById('footer-time').textContent = now.toLocaleString();
 }
 
+function updateProcessList(processes) {
+    const tbody = document.getElementById('process-list');
+    const sorted = processes
+        .sort((a, b) => b.cpu_percent - a.cpu_percent)
+        .slice(0, 10);
+    
+    if (sorted.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: var(--text-secondary);">No processes</td></tr>';
+        return;
+    }
+    
+    tbody.innerHTML = sorted.map(proc => {
+        const cpuColor = proc.cpu_percent > 50 ? 'var(--danger)' : 
+                        proc.cpu_percent > 25 ? 'var(--warning)' : 'inherit';
+        const memColor = proc.memory_percent > 10 ? 'var(--warning)' : 'inherit';
+        
+        return `
+            <tr>
+                <td class="process-name">${escapeHtml(proc.name)}</td>
+                <td>${proc.pid}</td>
+                <td>${escapeHtml(proc.username)}</td>
+                <td class="process-cpu" style="color: ${cpuColor}">${proc.cpu_percent.toFixed(1)}%</td>
+                <td style="text-align: right; color: ${memColor}">${proc.memory_percent.toFixed(1)}%</td>
+            </tr>
+        `;
+    }).join('');
+}
+
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
 function connect() {
     const ws = new WebSocket(`ws://${location.host}/ws`);
     const statusEl = document.getElementById('status-text');
@@ -132,6 +166,11 @@ function connect() {
             // Update Charts
             updateChart(cpuChart, cpuVal);
             updateChart(memChart, memVal);
+
+            // Update Process List
+            if (data.processes && data.processes.length > 0) {
+                updateProcessList(data.processes);
+            }
 
         } catch (e) {
             console.error('[SysGuard] Error parsing message:', e);

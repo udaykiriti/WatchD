@@ -1,5 +1,6 @@
 use serde::{Deserialize, Serialize};
-use sysinfo::{CpuExt, System, SystemExt, ProcessExt, PidExt, DiskExt, Disks};
+use sysinfo::{System, Disks};
+use std::ffi::{CString, c_char};
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct CpuMetrics {
@@ -129,7 +130,7 @@ pub fn get_all_metrics(limit: usize) -> SystemMetrics {
 }
 
 #[no_mangle]
-pub extern "C" fn rust_get_metrics_json(limit: usize) -> *mut libc::c_char {
+pub extern "C" fn rust_get_metrics_json(limit: usize) -> *mut c_char {
     let metrics = get_all_metrics(limit);
     let json = serde_json::to_string(&metrics).unwrap_or_else(|_| "{}".to_string());
     
@@ -139,7 +140,7 @@ pub extern "C" fn rust_get_metrics_json(limit: usize) -> *mut libc::c_char {
 }
 
 #[no_mangle]
-pub extern "C" fn rust_free_string(s: *mut libc::c_char) {
+pub extern "C" fn rust_free_string(s: *mut c_char) {
     unsafe {
         if !s.is_null() {
             let _ = std::ffi::CString::from_raw(s);
