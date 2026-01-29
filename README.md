@@ -228,11 +228,12 @@ logging:
 ## Documentation
 
 See `docs/` for detailed guides:
-- [Architecture](docs/ARCHITECTURE.md)
-- [Configuration Guide](docs/CONFIG.md)
-- [Auto-Fix Rules](docs/AUTOFIX.md)
-- [API Reference](docs/API.md)
-- [Native Backends](docs/NATIVE_BACKENDS.md)
+- [Architecture](docs/arch.md)
+- [Configuration Guide](docs/config.md)
+- [Auto-Fix Rules](docs/autofix.md)
+- [API Reference](docs/api.md)
+- [Native Backends](docs/ntive-backends.md)
+- [Performance](docs/performance.md)
 
 ## Troubleshooting
 
