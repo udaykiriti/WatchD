@@ -27,8 +27,7 @@ sudo rm -rf /tmp/* /var/tmp/*
 
 echo " • Cleaning Flatpak leftovers"
 if command -v flatpak >/dev/null 2>&1; then
-    flatpak uninstall --unused -y
-    flatpak repair
+    flatpak uninstall --unused -y && flatpak repair
 else
     echo "   Flatpak not present, skipping"
 fi
@@ -45,5 +44,4 @@ cat << "FOOTER"
 
 FOOTER
 
-echo " Disk usage:"
 df -h

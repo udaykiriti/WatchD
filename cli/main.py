@@ -1,5 +1,4 @@
 import click
-import time
 import yaml
 import os
 from rich.console import Console
@@ -88,6 +87,7 @@ def monitor(watch):
         return
 
     # Live Watch Mode
+    import time
     with Live(console=console, refresh_per_second=1) as live:
         while True:
             metrics = fetch_all_metrics()
@@ -99,9 +99,9 @@ def monitor(watch):
             table = Table(title="Live System Monitor")
             table.add_column("Metric")
             table.add_column("Value")
-            table.add_row("CPU", f"{cpu['usage_percent']}%")
-            table.add_row("Memory", f"{mem['percent']}%")
-            table.add_row("Disk", f"{disk.get('percent', 'N/A')}%")
+            table.add_row("CPU", f"{cpu['usage_percent']:.1f}%")
+            table.add_row("Memory", f"{mem['percent']:.1f}%")
+            table.add_row("Disk", f"{disk.get('percent', 0):.1f}%")
             
             proc_table = Table(title="Top Processes")
             proc_table.add_column("Name")

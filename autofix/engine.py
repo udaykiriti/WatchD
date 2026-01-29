@@ -10,9 +10,10 @@ logger = logging.getLogger("sysguard.engine")
 class AutoFixEngine:
     def __init__(self, config):
         self.config = config
-        self.enabled = config.get("autofix", {}).get("enabled", False)
-        self.dry_run = config.get("autofix", {}).get("dry_run", True)
-        self.rules = config.get("autofix", {}).get("rules", [])
+        autofix_cfg = config.get("autofix", {})
+        self.enabled = autofix_cfg.get("enabled", False)
+        self.dry_run = autofix_cfg.get("dry_run", True)
+        self.rules = autofix_cfg.get("rules", [])
 
     def run_check(self):
         if not self.enabled:
