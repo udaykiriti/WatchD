@@ -10,7 +10,7 @@ def get_memory_metrics():
     metrics = get_metrics_rust()
     if metrics and 'memory' in metrics:
         return metrics['memory']
-    raise RuntimeError("Native backend not available. Run: ./buildnative.sh")
+    raise RuntimeError("Native backend not available. Run: ./scripts/buildnative.sh")
 
 def memory_info():
     """Returns a formatted string for memory info."""

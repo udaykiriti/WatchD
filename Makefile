@@ -51,12 +51,12 @@ clean:
 
 install:
 	@echo "$(GREEN)Installing Python dependencies...$(NC)"
-	$(PYTHON) -m pip install -r requirements.txt
+	$(PYTHON) -m pip install -r requirements/requirements.txt
 	@echo "$(GREEN)✓ Dependencies installed!$(NC)"
 
 dev:
 	@echo "$(GREEN)Installing development dependencies...$(NC)"
-	$(PYTHON) -m pip install -r requirements-dev.txt 2>/dev/null || \
+	$(PYTHON) -m pip install -r requirements/requirements-dev.txt 2>/dev/null || \
 		$(PYTHON) -m pip install pytest black mypy pylint
 	@echo "$(GREEN)✓ Dev dependencies installed!$(NC)"
 

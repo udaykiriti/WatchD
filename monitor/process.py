@@ -25,7 +25,7 @@ def get_process_metrics(limit=5, sort_by='cpu'):
             }
             for p in processes
         ]
-    raise RuntimeError("Native backend not available. Run: ./buildnative.sh")
+    raise RuntimeError("Native backend not available. Run: ./scripts/buildnative.sh")
 
 def get_total_memory():
     """Helper to get total memory for percentage calculation (cached)."""

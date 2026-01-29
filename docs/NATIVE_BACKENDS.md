@@ -103,7 +103,7 @@ mem = get_memory_metrics()
 
 ### Quick Build (All Components)
 ```bash
-./buildnative.sh
+./scripts/buildnative.sh
 ```
 
 This script:
@@ -196,7 +196,7 @@ No code changes needed - just build the natives and they're automatically used!
 ## Troubleshooting
 
 ### "Native backend not found"
-- Run `./buildnative.sh` to build
+- Run `./scripts/buildnative.sh` to build
 - Check if Rust/GCC are installed
 - Verify paths in `.gitignore` aren't excluding builds
 

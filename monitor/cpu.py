@@ -16,7 +16,7 @@ def get_cpu_metrics():
             "cores_physical": cpu.get('cores_physical', cpu['cores_logical'] // 2),
             "load_avg": [cpu['load_avg_1'], cpu['load_avg_5'], cpu['load_avg_15']]
         }
-    raise RuntimeError("Native backend not available. Run: ./buildnative.sh")
+    raise RuntimeError("Native backend not available. Run: ./scripts/buildnative.sh")
 
 def cpu_info():
     """Returns a formatted string for CPU info."""

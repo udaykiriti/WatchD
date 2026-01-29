@@ -20,7 +20,7 @@ def main():
         return 0
     else:
         print("[ERROR] Native server not found. Build it first:")
-        print("  ./buildnative.sh")
+        print("  ./scripts/buildnative.sh")
         return 1
 
 if __name__ == "__main__":
