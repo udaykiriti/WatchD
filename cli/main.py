@@ -20,6 +20,27 @@ def load_config():
     with open(config_path, "r") as f:
         return yaml.safe_load(f)
 
+def build_metrics_table(cpu, mem, disk, title="System Status"):
+    """Build reusable metrics display table"""
+    table = Table(title=title)
+    table.add_column("Metric", style="cyan")
+    table.add_column("Value", style="magenta")
+    table.add_row("CPU Usage", f"{cpu['usage_percent']}% ({cpu['cores_logical']} cores)")
+    table.add_row("Memory", f"{mem['used_mb']}MB / {mem['total_mb']}MB ({mem['percent']}%)")
+    if "error" not in disk:
+        table.add_row("Disk", f"{disk['used_gb']}GB / {disk['total_gb']}GB ({disk['percent']}%)")
+    else:
+        table.add_row("Disk", f"[red]{disk['error']}[/red]")
+    return table
+
+def fetch_all_metrics():
+    """Fetch all metrics in one call to reduce system overhead"""
+    return {
+        'cpu': get_cpu_metrics(),
+        'memory': get_memory_metrics(),
+        'disk': get_disk_metrics()
+    }
+
 @click.group()
 def sysguard():
     """System Health & Auto-Fix Tool"""
@@ -28,22 +49,8 @@ def sysguard():
 @sysguard.command()
 def status():
     """Show system status snapshot"""
-    cpu = get_cpu_metrics()
-    mem = get_memory_metrics()
-    disk = get_disk_metrics()
-    
-    table = Table(title="System Status")
-    table.add_column("Metric", style="cyan")
-    table.add_column("Value", style="magenta")
-    
-    table.add_row("CPU Usage", f"{cpu['usage_percent']}% ({cpu['cores_logical']} cores)")
-    table.add_row("Memory", f"{mem['used_mb']}MB / {mem['total_mb']}MB ({mem['percent']} %)")
-    if "error" not in disk:
-        table.add_row("Disk", f"{disk['used_gb']}GB / {disk['total_gb']}GB ({disk['percent']} %)")
-    else:
-        table.add_row("Disk", f"[red]{disk['error']}[/red]")
-        
-    console.print(table)
+    metrics = fetch_all_metrics()
+    console.print(build_metrics_table(metrics['cpu'], metrics['memory'], metrics['disk']))
 
 @sysguard.command()
 def top():
@@ -77,25 +84,18 @@ def monitor(watch):
         alerts = engine.run_check()
         status()
         if alerts:
-            console.print("[bold red]Autofix Alerts:[/bold red]")
-            for a in alerts:
-                console.print(f"- {a}")
+            console.print("[bold red]Autofix Alerts:[/bold red]\n" + "\n".join(f"- {a}" for a in alerts))
         return
 
     # Live Watch Mode
     with Live(console=console, refresh_per_second=1) as live:
         while True:
-            cpu = get_cpu_metrics()
-            mem = get_memory_metrics()
-            disk = get_disk_metrics()
+            metrics = fetch_all_metrics()
+            cpu, mem, disk = metrics['cpu'], metrics['memory'], metrics['disk']
             
-            # Log metrics
             log_metrics(cpu['usage_percent'], mem['percent'], disk.get('percent', 0))
-            
-            # Run Autofix
             alerts = engine.run_check()
             
-            # Build Layout
             table = Table(title="Live System Monitor")
             table.add_column("Metric")
             table.add_column("Value")
@@ -107,11 +107,14 @@ def monitor(watch):
             proc_table.add_column("Name")
             proc_table.add_column("CPU%")
             for p in get_process_metrics(limit=5):
-                proc_table.add_row(p['name'], str(p['cpu_percent']))
+                proc_table.add_row(p['name'], f"{p['cpu_percent']:.1f}")
                 
-            alert_panel = Panel("\n".join(alerts) if alerts else "No active alerts", title="Autofix Status", border_style="red" if alerts else "green")
+            alert_panel = Panel(
+                "\n".join(alerts) if alerts else "No active alerts",
+                title="Autofix Status",
+                border_style="red" if alerts else "green"
+            )
             
-            # Combine (Simple vertical stack for now)
             grid = Table.grid()
             grid.add_row(table)
             grid.add_row(proc_table)

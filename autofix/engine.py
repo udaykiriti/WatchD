@@ -18,24 +18,17 @@ class AutoFixEngine:
         if not self.enabled:
             return []
 
-        cpu = get_cpu_metrics()
-        mem = get_memory_metrics()
-        disk = get_disk_metrics()
-
         metrics = {
-            "cpu": cpu,
-            "memory": mem,
-            "disk": disk,
-            # Flattened shortcuts for rules
-            "cpu_percent": cpu["usage_percent"],
-            "memory_percent": mem["percent"],
-            "disk_percent": disk["percent"]
+            "cpu": get_cpu_metrics(),
+            "memory": get_memory_metrics(),
+            "disk": get_disk_metrics()
         }
-
+        
+        flat_metrics = self._flatten_metrics(metrics)
         triggered_actions = []
 
         for rule in self.rules:
-            if evaluate_condition(metrics, rule["trigger"]):
+            if evaluate_condition(flat_metrics, rule["trigger"]):
                 action_name = rule["action"]
                 triggered_actions.append(f"Rule '{rule['name']}' triggered: {action_name}")
                 
@@ -45,6 +38,17 @@ class AutoFixEngine:
                     logger.info(f"[DRY RUN] Would execute: {action_name}")
 
         return triggered_actions
+    
+    def _flatten_metrics(self, metrics):
+        """Flatten nested metrics once for all rule evaluations"""
+        flat = {}
+        for k, v in metrics.items():
+            if isinstance(v, dict):
+                for sub_k, sub_v in v.items():
+                    flat[f"{k}_{sub_k}"] = sub_v
+            else:
+                flat[k] = v
+        return flat
 
     def execute_action(self, action_name):
         logger.info(f"Executing action: {action_name}")
@@ -53,4 +57,3 @@ class AutoFixEngine:
         elif action_name.startswith("restart_"):
             svc = action_name.replace("restart_", "")
             restart_service(svc)
-        # Add more mappings as needed

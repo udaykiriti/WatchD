@@ -17,14 +17,13 @@ def get_db_connection():
 def init_db():
     """Initialize database tables"""
     with get_db_connection() as conn:
-        c = conn.cursor()
-        c.execute('''CREATE TABLE IF NOT EXISTS alerts (
+        conn.execute('''CREATE TABLE IF NOT EXISTS alerts (
                         id INTEGER PRIMARY KEY AUTOINCREMENT,
                         timestamp TEXT,
                         type TEXT,
                         message TEXT
                     )''')
-        c.execute('''CREATE TABLE IF NOT EXISTS metrics (
+        conn.execute('''CREATE TABLE IF NOT EXISTS metrics (
                         id INTEGER PRIMARY KEY AUTOINCREMENT,
                         timestamp TEXT,
                         cpu REAL,
@@ -36,15 +35,14 @@ def init_db():
 def log_metrics(cpu, memory, disk):
     """Log system metrics to database"""
     with get_db_connection() as conn:
-        c = conn.cursor()
-        c.execute("INSERT INTO metrics (timestamp, cpu, memory, disk) VALUES (?, ?, ?, ?)",
-                  (datetime.now().isoformat(), cpu, memory, disk))
+        conn.execute("INSERT INTO metrics (timestamp, cpu, memory, disk) VALUES (?, ?, ?, ?)",
+                     (datetime.now().isoformat(), cpu, memory, disk))
         conn.commit()
 
 def get_recent_alerts(limit=10):
     """Retrieve recent alerts from database"""
     with get_db_connection() as conn:
-        c = conn.cursor()
-        c.execute("SELECT timestamp, type, message FROM alerts ORDER BY id DESC LIMIT ?", (limit,))
-        return c.fetchall()
-
+        return conn.execute(
+            "SELECT timestamp, type, message FROM alerts ORDER BY id DESC LIMIT ?",
+            (limit,)
+        ).fetchall()
