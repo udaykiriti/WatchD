@@ -15,7 +15,7 @@ if command -v cargo >/dev/null 2>&1; then
     cd ../../..
     echo "[OK] Rust backend built successfully"
 else
-    echo "⚠ Cargo not found. Skipping Rust build."
+    echo "[Warning]: Cargo not found. Skipping Rust build."
     echo "  Install: curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh"
 fi
 
@@ -30,7 +30,7 @@ if command -v gcc >/dev/null 2>&1; then
     cd ../../..
     echo "[OK] C backend built successfully"
 else
-    echo "⚠ GCC not found. Skipping C build."
+    echo "[Warning]: GCC not found. Skipping C build."
     echo "  Install: sudo dnf install gcc make"
 fi
 
@@ -43,13 +43,13 @@ if command -v gcc >/dev/null 2>&1; then
     make clean
     make
     cd ../..
-    echo "[OK] Native web server built successfully"
+    echo "[OK]: Native web server built successfully"
 else
-    echo "⚠ Skipping native web server build (no GCC)"
+    echo "[Warning]: Skipping native web server build (no GCC)"
 fi
 
 echo ""
-echo "=== Build Complete ==="
+echo "<---- Build Complete ---->"
 echo ""
 echo "Native backends are now available for performance acceleration."
 echo "The monitor module will automatically use them when available."
