@@ -13,7 +13,7 @@ if command -v cargo >/dev/null 2>&1; then
     cd monitor/native/rust
     cargo build --release
     cd ../../..
-    echo "✓ Rust backend built successfully"
+    echo "[OK] Rust backend built successfully"
 else
     echo "⚠ Cargo not found. Skipping Rust build."
     echo "  Install: curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh"
@@ -28,7 +28,7 @@ if command -v gcc >/dev/null 2>&1; then
     make clean
     make
     cd ../../..
-    echo "✓ C backend built successfully"
+    echo "[OK] C backend built successfully"
 else
     echo "⚠ GCC not found. Skipping C build."
     echo "  Install: sudo dnf install gcc make"

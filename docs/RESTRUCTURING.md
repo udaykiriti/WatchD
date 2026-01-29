@@ -28,18 +28,18 @@ sysguard/
 ## Why This Is Better
 
 ### Before (Problems):
-❌ Three separate monitoring implementations  
-❌ Manual selection required via nativebridge.py  
-❌ Confusing for users - which one to use?  
-❌ Duplicate functionality  
-❌ Hard to maintain  
+- Three separate monitoring implementations  
+- Manual selection required via nativebridge.py  
+- Confusing for users - which one to use?  
+- Duplicate functionality  
+- Hard to maintain  
 
 ### After (Solutions):
-✅ **One unified `monitor` module**  
-✅ **Automatic native backend detection**  
-✅ **Clean separation**: Python (always works) + Native (optional speed)  
-✅ **Zero config** - just build natives if you want speed  
-✅ **Easy maintenance**  
+- One unified `monitor` module
+- Automatic native backend detection
+- Clean separation: Python (always works) + Native (optional speed)
+- Zero config - just build natives if you want speed
+- Easy maintenance  
 
 ## How It Works Now
 
@@ -134,10 +134,10 @@ cd ../cmonitor && make
 
 All existing code continues to work:
 ```bash
-python3 run.py status      # ✓ Works
-python3 run.py monitor     # ✓ Works  
-python3 run.py top         # ✓ Works
-python3 run.py web         # ✓ Works
+python3 run.py status      # Works
+python3 run.py monitor     # Works  
+python3 run.py top         # Works
+python3 run.py web         # Works
 ```
 
 ## Performance
